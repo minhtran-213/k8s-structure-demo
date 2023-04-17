@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-demo
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-demo
+  template:
+    metadata:
+      labels:
+        app: book-demo
+    spec:
+      volumes:
+        - name: config-volume
+          configMap:
+            name: demo-config
+            items:
+              - key: application-config.yaml
+                path: application-config.yaml
+      containers:
+        - name: book-demo
+          image: docker.io/minhtb213/book-demo
+          env:
+            - name: SPRING_CONFIG_ADDITIONAL_LOCATION
+              value: /opt/app-config/application-config.yaml
+          volumeMounts:
+            - mountPath: /opt/app-config
+              name: config-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: demo
+  name: book-demo-service
+spec:
+  selector:
+    app: book-demo
+  type: ClusterIP
+  ports:
+    - port: 8088
+      targetPort: 8088
+      name: book-demo
+      protocol: TCP

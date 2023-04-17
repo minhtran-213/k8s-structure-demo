@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-project
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-project
+  template:
+    metadata:
+      labels:
+        app: demo-project
+    spec:
+      volumes:
+        - name: config-volume
+          configMap:
+            name: demo-config
+            items:
+              - key: application-config.yaml
+                path: application-config.yaml
+      containers:
+        - name: demo-project
+          image: docker.io/minhtb213/demo-project
+          env:
+            - name: SPRING_CONFIG_ADDITIONAL_LOCATION
+              value: /opt/app-config/application-config.yaml
+          volumeMounts:
+            - mountPath: /opt/app-config
+              name: config-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: demo
+  name: demo-project-service
+spec:
+  selector:
+    app: demo-project
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 8088
+      name: demo-project
+      protocol: TCP

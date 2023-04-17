@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: book-demo-flyway-job
+  namespace: demo
+spec:
+  template:
+    spec:
+      containers:
+        - name: book-demo-flyway
+          image: docker.io/minhtb213/book-flyway-demo
+          env:
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: SPRING_DATASOURCE_URL
+                  name: demo-config
+            - name: SPRING_DATASOURCE_USERNAME
+              value: admin
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: admin
+      restartPolicy: OnFailure

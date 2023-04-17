@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: demo
+  name: demo-config
+data:
+  SPRING_DATASOURCE_URL: >-
+    jdbc:postgresql://postgres.postgresdb.svc.cluster.local:5432/book_demo
+  application-config.yaml: >-
+    spring:
+      datasource:
+        url: jdbc:postgresql://postgres.postgresdb.svc.cluster.local:5432/book_demo
+        username: admin
+        password: admin
+      security:
+        oauth2:
+          resourceserver:
+            jwt:
+              issuer-uri: http://keycloak-demo/realms/keycloak-poc
