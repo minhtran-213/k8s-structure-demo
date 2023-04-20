@@ -24,6 +24,10 @@ spec:
         - name: demo-project
           image: docker.io/minhtb213/demo-project
           env:
+            - name: SERVER_PORT
+              value: "8088"
+            - name: SERVER_SERVLET_CONTEXT_PATH
+              value: /test-service 
             - name: SPRING_CONFIG_ADDITIONAL_LOCATION
               value: /opt/app-config/application-config.yaml
           volumeMounts:
@@ -38,9 +42,9 @@ metadata:
 spec:
   selector:
     app: demo-project
-  type: NodePort
+  type: ClusterIP
   ports:
-    - port: 80
+    - port: 8088
       targetPort: 8088
       name: demo-project
       protocol: TCP

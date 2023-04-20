@@ -1,35 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: book-demo
+  name: gateway
   namespace: demo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: book-demo
+      app: gateway
   template:
     metadata:
       labels:
-        app: book-demo
+        app: gateway
     spec:
       volumes:
         - name: config-volume
           configMap:
             name: demo-config
             items:
-              - key: application-config.yaml
-                path: application-config.yaml
+              - key: application-gateway-config.yaml
+                path: application-gateway-config.yaml
       containers:
-        - name: book-demo
-          image: docker.io/minhtb213/book-demo
+        - name: gateway
+          image: docker.io/minhtb213/gateway-service
           env:
             - name: SERVER_PORT
-              value: "8088"
-            - name: SERVER_SERVLET_CONTEXT_PATH
-              value: /book-service
+              value: "8000"
             - name: SPRING_CONFIG_ADDITIONAL_LOCATION
-              value: /opt/app-config/application-config.yaml
+              value: /opt/app-config/application-gateway-config.yaml
           volumeMounts:
             - mountPath: /opt/app-config
               name: config-volume
@@ -38,13 +36,14 @@ apiVersion: v1
 kind: Service
 metadata:
   namespace: demo
-  name: book-demo-service
+  name: gateway-service
 spec:
   selector:
-    app: book-demo
-  type: ClusterIP
+    app: gateway
+  type: NodePort
   ports:
-    - port: 8088
-      targetPort: 8088
-      name: book-demo
+    - port: 80
+      targetPort: 8000
+      nodePort: 30333
+      name: gateway
       protocol: TCP

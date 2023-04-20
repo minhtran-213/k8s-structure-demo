@@ -16,4 +16,34 @@ data:
         oauth2:
           resourceserver:
             jwt:
-              issuer-uri: http://keycloak-demo/realms/keycloak-poc
+              issuer-uri: http://keycloak.keycloak/realms/keycloak-poc
+  application-gateway-config.yaml: >-
+    spring:
+      security:
+        oauth2:
+          client:
+            provider:
+              keycloak:
+                issuer-uri: http://keycloak.keycloak/realms/keycloak-poc
+            registration:
+              api-client:
+                provider: keycloak
+                client-id: springboot
+                client-secret: N8EMYwBoF7utTSLAxvTMVoHDEytWrqXB
+      cloud:
+        gateway:
+          routes:
+            - id: book_api
+              uri: http://book-demo-service.demo:8088
+              predicates:
+                - Path=/book-service/api/v1/**
+              filters:
+                - RewritePath=/api/v1/new(?<segment>/?.*), $\{segment}
+                - TokenRelay=
+            - id: demo_api
+              uri: http://demo-project-service.demo:8088
+              predicates:
+                - Path=/test-service/api/v1/**
+              filters:
+                - RewritePath=/api/v1/new(?<segment>/?.*), $\{segment}
+                - TokenRelay=

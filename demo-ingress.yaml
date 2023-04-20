@@ -8,13 +8,13 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
-  - host: demo-project
+  - host: gateway
     http:
       paths:
-      - path: /test-service/api/v1/test/get-name
-        pathType: Prefix
-        backend:
-          service:
-            name: demo-project-service
-            port:
-              number: 80
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: gateway-service
+              port:
+                number: 30333

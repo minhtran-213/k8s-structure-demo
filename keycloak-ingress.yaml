@@ -8,7 +8,7 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
-  - host: keycloak-demo
+  - host: keycloak.keycloak
     http:
       paths:
       - path: /
@@ -17,4 +17,4 @@ spec:
           service:
             name: keycloak
             port:
-              number: 32117
+              number: 80
